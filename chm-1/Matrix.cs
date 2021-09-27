@@ -8,18 +8,20 @@ namespace chm_1
     /// </summary>
     public class Matrix
     {
-        /// di is for diagonal elements
-        private static double[] _di;
-
         /// al is for elements of lower triangular part of matrix
-        private double[] _al;
+        private readonly double[] _al;
 
         /// au is for elements of upper triangular part of matrix
-        private double[] _au;
+        private readonly double[] _au;
+
+        /// di is for diagonal elements
+        private readonly double[] _di;
 
         /// ia is for profile matrix. i.e. by manipulating ia elements we can use our matrix
         /// much more time and memory efficient
-        private int[] _ia;
+        private readonly int[] _ia;
+
+        private bool _decomposed = false;
 
         public Matrix()
         {
@@ -89,21 +91,71 @@ namespace chm_1
 
                 _di[i] = Math.Sqrt(_di[i] - sumDi);
             }
+
+            _decomposed = true;
         }
 
         public void Pprint()
         {
             Console.WriteLine("Matrix PPRINT:");
 
-            for (uint i = 0; i < Size; i++)
+            if (_decomposed == false)
             {
-                for (uint j = 0; j < Size; j++)
+                Console.WriteLine("undecomposed:");
+
+                for (uint i = 0; i < Size; i++)
                 {
-                    Console.Write(this[i, j]);
+                    for (uint j = 0; j < Size; j++)
+                    {
+                        Console.Write(this[i, j]);
+                    }
+
+                    Console.WriteLine("");
+                }
+            }
+            else
+            {
+                Console.WriteLine("decomposed:");
+
+                Console.WriteLine("L:");
+
+                for (uint i = 0; i < Size; i++)
+                {
+                    for (uint j = 0; j < Size; j++)
+                    {
+                        Console.Write(l(i, j));
+                    }
+
+                    Console.WriteLine();
                 }
 
-                Console.WriteLine("");
+                Console.WriteLine("U:");
+
+                for (uint i = 0; i < Size; i++)
+                {
+                    for (uint j = 0; j < Size; j++)
+                    {
+                        Console.Write(u(i, j));
+                    }
+
+                    Console.WriteLine();
+                }
             }
+        }
+
+        public double u(uint i, uint j)
+        {
+            if (i == j)
+            {
+                return 1.0;
+            }
+
+            return i > j ? this[i, j] : 0.0;
+        }
+
+        public double l(uint i, uint j)
+        {
+            return i <= j ? this[i, j] : 0.0;
         }
 
         private double GetElement(uint i, uint j)
