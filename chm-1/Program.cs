@@ -15,6 +15,8 @@ namespace chm_1
             var matrixA = Utils.LoadFrom(file);
 
             Console.WriteLine(matrixA);
+
+            matrixA.Pprint();
         }
     }
 }

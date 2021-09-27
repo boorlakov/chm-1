@@ -8,14 +8,14 @@ namespace chm_1
     /// </summary>
     public class Matrix
     {
+        /// di is for diagonal elements
+        private static double[] _di;
+
         /// al is for elements of lower triangular part of matrix
         private double[] _al;
 
         /// au is for elements of upper triangular part of matrix
         private double[] _au;
-
-        /// di is for diagonal elements
-        private double[] _di;
 
         /// ia is for profile matrix. i.e. by manipulating ia elements we can use our matrix
         /// much more time and memory efficient
@@ -37,55 +37,93 @@ namespace chm_1
             _au = au ?? throw new ArgumentNullException(nameof(au));
             _al = al ?? throw new ArgumentNullException(nameof(al));
         }
-        
-        //Сюда не смотреть. Список людей, кому можно смотреть: Полина.
-        public void LU_decomposition()
-        {
-            for (int i = 0; i < Size; i++)
-            {
-                int j = i - (_ia[i + 1] - _ia[i]); //first non-zero element of i-line
-                double sumdi = 0;
-                for (int k = _ia[i]; (k < _ia[i + 1]); j++, k++)
-                {
-                    double sumal = 0;
-                    double sumau = 0;
-                    int tl = _ia[i];
-                    int tu = _ia[j];
-                    int a = k - _ia[i] - (_ia[j + 1] - _ia[j]); //shift
-                    if (a < 0)
-                    {
-                        tu += Math.Abs(a);
-                    }
-                    else
-                    {
-                        tl += a;
-                    }
 
-                    while (tl < k)
-                    {
-                        sumal += _au[tu] * _al[tl];
-                        sumau += _au[tl] * _al[tu];
-                        tl++;
-                        tu++;
-                    }
-
-                    if (k < _al.Length) //неппавильный фрагмент начинается
-                    {
-                        _al[k] = (_al[k] - sumal) / _di[j];
-                        _au[k] = (_au[k] - sumau) / _di[j];
-                        sumdi += _al[k] * _au[k];
-                    } //неправильный фрагмент заканчивается
-                }
-
-                _di[i] = Math.Sqrt(_di[i] - sumdi);
-            }
-        }
+        /// <summary>
+        /// Warning: accessing the data in that way is not fast
+        /// </summary>
+        /// <param name="i"> row </param>
+        /// <param name="j"> column </param>
+        public double this[uint i, uint j] => GetElement(i, j);
 
         private uint Size { get; }
 
+        //Сюда не смотреть. Список людей, кому можно смотреть: Полина. 🤓
+        public void LU_decomposition()
+        {
+            for (var i = 0; i < Size; i++)
+            {
+                var startPos = i - (_ia[i + 1] - _ia[i]); //first non-zero element of i-line
+                double sumDi = 0;
+
+                for (var k = _ia[i]; (k < _ia[i + 1]); startPos++, k++)
+                {
+                    double sumAl = 0;
+                    double sumAu = 0;
+                    var tL = _ia[i];
+                    var tU = _ia[startPos];
+                    var shift = k - _ia[i] - (_ia[startPos + 1] - _ia[startPos]);
+
+                    if (shift < 0)
+                    {
+                        tU += Math.Abs(shift);
+                    }
+                    else
+                    {
+                        tL += shift;
+                    }
+
+                    while (tL < k)
+                    {
+                        sumAl += _au[tU] * _al[tL];
+                        sumAu += _au[tL] * _al[tU];
+                        tL++;
+                        tU++;
+                    }
+
+                    // Less nesting == good!
+                    if (k >= _al.Length) continue;
+                    _al[k] = (_al[k] - sumAl) / _di[startPos];
+                    _au[k] = (_au[k] - sumAu) / _di[startPos];
+                    sumDi += _al[k] * _au[k];
+                }
+
+                _di[i] = Math.Sqrt(_di[i] - sumDi);
+            }
+        }
+
+        public void Pprint()
+        {
+            Console.WriteLine("Matrix PPRINT:");
+
+            for (uint i = 0; i < Size; i++)
+            {
+                for (uint j = 0; j < Size; j++)
+                {
+                    Console.Write(this[i, j]);
+                }
+
+                Console.WriteLine("");
+            }
+        }
+
+        private double GetElement(uint i, uint j)
+        {
+            if (i == j)
+            {
+                return _di[i];
+            }
+
+            if (i > j)
+            {
+                return j + 1 <= i - (_ia[i + 1] - _ia[i]) ? 0.0 : _al[_ia[i + 1] + j - 1 - i];
+            }
+
+            return i + 1 <= j - (_ia[j + 1] - _ia[j]) ? 0.0 : _au[_ia[j + 1] + i - j - 1];
+        }
+
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder($"{nameof(Matrix)}:\ndi:\n");
+            var sb = new StringBuilder($"{nameof(Matrix)}:\ndi:\n");
 
             foreach (var item in _di)
             {
