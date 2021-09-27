@@ -16,7 +16,7 @@ namespace chm_1
             var di = ln!.Split(' ').Select(double.Parse).ToArray();
 
             ln = file.ReadLine();
-            var ia = ln!.Split(' ').Select(uint.Parse).ToArray();
+            var ia = ln!.Split(' ').Select(int.Parse).ToArray();
 
             ln = file.ReadLine();
             var au = ln!.Split(' ').Select(double.Parse).ToArray();
