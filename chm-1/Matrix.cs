@@ -54,8 +54,8 @@ namespace chm_1
             for (int i = 1; i < Size; i++)
             {
                 double sumDi = 0;
-                int j0 = i - (_ia[i + 1] - _ia[i]);
-                for (int ii = _ia[i]; ii < _ia[i + 1]; ii++)
+                int j0 = i - (_ia[i + 1] - _ia[i]) - 1;
+                for (int ii = _ia[i]; ii < _ia[i + 1] - 1; ii++)
                 {
                     int j = ii - _ia[i] + j0;
                     int jBeg = _ia[j];
@@ -66,27 +66,27 @@ namespace chm_1
                         int jjBeg = Math.Max(j0, j0j);
                         int jjEnd = Math.Max(j, i - 1);
                         double cL = 0;
-                        for (int k = 0; k < jjEnd - jjBeg; k++)
+                        for (int k = 0; k < jjEnd - jjBeg - 1; k++)
                         {
                             int indAu = _ia[j] + jjBeg - j0j + k;
                             int indAl = _ia[i] + jjBeg - j0 + k;
                             cL += _au[indAu] * _al[indAl];
                         }
 
-                        _al[ii - 1] -= cL;
+                        _al[ii] -= cL;
                         double cU = 0;
-                        for (int k = 0; k < jjEnd - jjBeg; k++)
+                        for (int k = 0; k < jjEnd - jjBeg - 1; k++)
                         {
                             int indAl = _ia[j] + jjBeg - j0j + k;
                             int indAu = _ia[i] + jjBeg - j0 + k;
                             cU += _au[indAu] * _al[indAl];
                         }
 
-                        _au[ii - 1] = _al[ii - 1] - cU;
+                        _au[ii] = _al[ii] - cU;
                     }
 
-                    _au[ii - 1] /= _di[j + 1];
-                    sumDi += _al[ii - 1] * _au[ii - 1];
+                    _au[ii] /= _di[j + 1];
+                    sumDi += _al[ii] * _au[ii];
                 }
 
                 _di[i] -= sumDi;
@@ -150,12 +150,12 @@ namespace chm_1
                 return 1.0;
             }
 
-            return i > j ? this[i, j] : 0.0;
+            return i < j ? this[i, j] : 0.0;
         }
 
         public double L(uint i, uint j)
         {
-            return i <= j ? this[i, j] : 0.0;
+            return i >= j ? this[i, j] : 0.0;
         }
 
         private double GetElement(uint i, uint j)
