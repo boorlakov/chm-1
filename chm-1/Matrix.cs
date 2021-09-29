@@ -29,7 +29,7 @@ namespace chm_1
         /// </summary>
         private readonly int[] _ia;
 
-        private bool _decomposed = false;
+        private bool _decomposed;
 
         public Matrix()
         {
@@ -37,6 +37,7 @@ namespace chm_1
             _au = Array.Empty<double>();
             _al = Array.Empty<double>();
             _ia = Array.Empty<int>();
+            _decomposed = false;
         }
 
         public Matrix(uint size, double[] di, int[] ia, double[] au, double[] al)
@@ -46,6 +47,7 @@ namespace chm_1
             _ia = ia ?? throw new ArgumentNullException(nameof(ia));
             _au = au ?? throw new ArgumentNullException(nameof(au));
             _al = al ?? throw new ArgumentNullException(nameof(al));
+            _decomposed = false;
         }
 
         /// <summary>
@@ -61,7 +63,7 @@ namespace chm_1
         ///     LU-decomposition with value=1 in diagonal elements of U matrix.
         ///     Corrupts base object. To access data as one matrix you need to build it from L and U.
         /// </summary>
-        /// <exception cref="DivideByZeroException"></exception>
+        /// <exception cref="DivideByZeroException"> If diagonal element is zero </exception>
         public void LU_decomposition()
         {
             for (var i = 1; i < Size; i++)
@@ -77,14 +79,14 @@ namespace chm_1
 
                     if (jBeg < jEnd)
                     {
-                        var j0j = j - (jEnd - jBeg);
-                        var jjBeg = Max(j0, j0j);
+                        var j0J = j - (jEnd - jBeg);
+                        var jjBeg = Max(j0, j0J);
                         var jjEnd = Max(j, i - 1);
                         var cL = 0.0;
 
                         for (var k = 0; k < jjEnd - jjBeg - 1; k++)
                         {
-                            var indAu = _ia[j] + jjBeg - j0j + k - 1;
+                            var indAu = _ia[j] + jjBeg - j0J + k - 1;
                             var indAl = _ia[i] + jjBeg - j0 + k - 1;
                             cL += _au[indAu] * _al[indAl];
                         }
@@ -94,7 +96,7 @@ namespace chm_1
 
                         for (var k = 0; k < jjEnd - jjBeg - 1; k++)
                         {
-                            var indAl = _ia[j] + jjBeg - j0j + k - 1;
+                            var indAl = _ia[j] + jjBeg - j0J + k - 1;
                             var indAu = _ia[i] + jjBeg - j0 + k - 1;
                             cU += _au[indAu] * _al[indAl];
                         }
@@ -104,7 +106,7 @@ namespace chm_1
 
                     if (_di[j] == 0.0)
                     {
-                        throw new DivideByZeroException($"No zero dividing. DEBUG INFO: [i:{i}; j:{j}]");
+                        throw new DivideByZeroException($"No dividing by zero. DEBUG INFO: [i:{i}; j:{j}]");
                     }
 
                     _au[ii] /= _di[j];
@@ -200,6 +202,7 @@ namespace chm_1
         /// </summary>
         /// <param name="i"> rows </param>
         /// <param name="j"> columns</param>
+        /// <exception cref="FieldAccessException"> If matrix is not decomposed </exception>
         /// <returns></returns>
         public double U(int i, int j)
         {
@@ -217,10 +220,11 @@ namespace chm_1
         }
 
         /// <summary>
-        ///     l[i][j] of Upper triangular matrix L
+        ///     l[i][j] of Lower triangular matrix L
         /// </summary>
         /// <param name="i"> rows </param>
         /// <param name="j"> columns</param>
+        /// <exception cref="FieldAccessException"> If matrix is not decomposed </exception>
         /// <returns></returns>
         public double L(int i, int j)
         {
