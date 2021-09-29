@@ -49,47 +49,47 @@ namespace chm_1
 
         private uint Size { get; }
 
-        //Сюда не смотреть. Список людей, кому можно смотреть: Полина. 🤓
         public void LU_decomposition()
         {
-            for (var i = 0; i < Size; i++)
+            for (int i = 1; i < Size; i++)
             {
-                var startPos = i - (_ia[i + 1] - _ia[i]); //first non-zero element of i-line
                 double sumDi = 0;
-
-                for (var k = _ia[i]; (k < _ia[i + 1]); startPos++, k++)
+                int j0 = i - (_ia[i + 1] - _ia[i]);
+                for (int ii = _ia[i]; ii < _ia[i + 1]; ii++)
                 {
-                    double sumAl = 0;
-                    double sumAu = 0;
-                    var tL = _ia[i];
-                    var tU = _ia[startPos];
-                    var shift = k - _ia[i] - (_ia[startPos + 1] - _ia[startPos]);
-
-                    if (shift < 0)
+                    int j = ii - _ia[i] + j0;
+                    int jBeg = _ia[j];
+                    int jEnd = _ia[j + 1];
+                    if (jBeg < jEnd)
                     {
-                        tU += Math.Abs(shift);
-                    }
-                    else
-                    {
-                        tL += shift;
+                        int j0j = j - (jEnd - jBeg);
+                        int jjBeg = Math.Max(j0, j0j);
+                        int jjEnd = Math.Max(j, i - 1);
+                        double cL = 0;
+                        for (int k = 0; k < jjEnd - jjBeg; k++)
+                        {
+                            int indAu = _ia[j] + jjBeg - j0j + k;
+                            int indAl = _ia[i] + jjBeg - j0 + k;
+                            cL += _au[indAu] * _al[indAl];
+                        }
+
+                        _al[ii - 1] -= cL;
+                        double cU = 0;
+                        for (int k = 0; k < jjEnd - jjBeg; k++)
+                        {
+                            int indAl = _ia[j] + jjBeg - j0j + k;
+                            int indAu = _ia[i] + jjBeg - j0 + k;
+                            cU += _au[indAu] * _al[indAl];
+                        }
+
+                        _au[ii - 1] = _al[ii - 1] - cU;
                     }
 
-                    while (tL < k)
-                    {
-                        sumAl += _au[tU] * _al[tL];
-                        sumAu += _au[tL] * _al[tU];
-                        tL++;
-                        tU++;
-                    }
-
-                    // Less nesting == good!
-                    if (k >= _al.Length) continue;
-                    _al[k] = (_al[k] - sumAl) / _di[startPos];
-                    _au[k] = (_au[k] - sumAu) / _di[startPos];
-                    sumDi += _al[k] * _au[k];
+                    _au[ii - 1] /= _di[j + 1];
+                    sumDi += _al[ii - 1] * _au[ii - 1];
                 }
 
-                _di[i] = Math.Sqrt(_di[i] - sumDi);
+                _di[i] -= sumDi;
             }
 
             _decomposed = true;

@@ -17,6 +17,10 @@ namespace chm_1
             Console.WriteLine(matrixA);
 
             matrixA.Pprint();
+
+            matrixA.LU_decomposition();
+
+            matrixA.Pprint();
         }
     }
 }
