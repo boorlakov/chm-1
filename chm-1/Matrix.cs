@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using static System.Math;
 
 namespace chm_1
 {
@@ -45,47 +46,56 @@ namespace chm_1
         /// </summary>
         /// <param name="i"> row </param>
         /// <param name="j"> column </param>
-        public double this[uint i, uint j] => GetElement(i, j);
+        public double this[int i, int j] => GetElement(i, j);
 
         private uint Size { get; }
 
         public void LU_decomposition()
         {
-            for (int i = 1; i < Size; i++)
+            for (var i = 1; i < Size; i++)
             {
-                double sumDi = 0;
-                int j0 = i - (_ia[i + 1] - _ia[i]) - 1;
-                for (int ii = _ia[i]; ii < _ia[i + 1] - 1; ii++)
+                var sumDi = 0.0;
+                var j0 = i - (_ia[i + 1] - _ia[i]);
+
+                for (var ii = _ia[i] - 1; ii < _ia[i + 1] - 1; ii++)
                 {
-                    int j = ii - _ia[i] + j0;
-                    int jBeg = _ia[j];
-                    int jEnd = _ia[j + 1];
+                    var j = ii - _ia[i] + j0 + 1;
+                    var jBeg = _ia[j];
+                    var jEnd = _ia[j + 1];
+
                     if (jBeg < jEnd)
                     {
-                        int j0j = j - (jEnd - jBeg);
-                        int jjBeg = Math.Max(j0, j0j);
-                        int jjEnd = Math.Max(j, i - 1);
-                        double cL = 0;
-                        for (int k = 0; k < jjEnd - jjBeg - 1; k++)
+                        var j0j = j - (jEnd - jBeg);
+                        var jjBeg = Max(j0, j0j);
+                        var jjEnd = Max(j, i - 1);
+                        var cL = 0.0;
+
+                        for (var k = 0; k < jjEnd - jjBeg - 1; k++)
                         {
-                            int indAu = _ia[j] + jjBeg - j0j + k;
-                            int indAl = _ia[i] + jjBeg - j0 + k;
+                            var indAu = _ia[j] + jjBeg - j0j + k - 1;
+                            var indAl = _ia[i] + jjBeg - j0 + k - 1;
                             cL += _au[indAu] * _al[indAl];
                         }
 
                         _al[ii] -= cL;
-                        double cU = 0;
-                        for (int k = 0; k < jjEnd - jjBeg - 1; k++)
+                        var cU = 0.0;
+
+                        for (var k = 0; k < jjEnd - jjBeg - 1; k++)
                         {
-                            int indAl = _ia[j] + jjBeg - j0j + k;
-                            int indAu = _ia[i] + jjBeg - j0 + k;
+                            var indAl = _ia[j] + jjBeg - j0j + k - 1;
+                            var indAu = _ia[i] + jjBeg - j0 + k - 1;
                             cU += _au[indAu] * _al[indAl];
                         }
 
-                        _au[ii] = _al[ii] - cU;
+                        _au[ii] -= cU;
                     }
 
-                    _au[ii] /= _di[j + 1];
+                    if (_di[j] == 0.0)
+                    {
+                        throw new Exception($"No zero dividing. DEBUG INFO: [i:{i}; j+1:{j + 1}]");
+                    }
+
+                    _au[ii] /= _di[j];
                     sumDi += _al[ii] * _au[ii];
                 }
 
@@ -95,22 +105,56 @@ namespace chm_1
             _decomposed = true;
         }
 
+        /// <summary>
+        /// Was made for debugging LU-decomposition
+        /// </summary>
+        /// <returns></returns>
+        public bool check_decomposition()
+        {
+            Console.WriteLine("\nLU-check:");
+            var correctness = true;
+
+            for (var i = 0; i < Size; i++)
+            {
+                for (var j = 0; j < Size; j++)
+                {
+                    var c = 0.0;
+
+                    for (var k = 0; k < Size; k++)
+                    {
+                        c += L(i, k) * U(k, j);
+                    }
+
+                    // this wont work
+                    if (c != this[i, j])
+                    {
+                        correctness = false;
+                    }
+
+                    Console.Write($"{c} ");
+                }
+
+                Console.WriteLine();
+            }
+
+            return correctness;
+        }
         public void Pprint()
         {
-            Console.WriteLine("Matrix PPRINT:");
+            Console.WriteLine("\nMatrix PPRINT:\n");
 
             if (_decomposed == false)
             {
                 Console.WriteLine("undecomposed:");
 
-                for (uint i = 0; i < Size; i++)
+                for (var i = 0; i < Size; i++)
                 {
-                    for (uint j = 0; j < Size; j++)
+                    for (var j = 0; j < Size; j++)
                     {
-                        Console.Write(this[i, j]);
+                        Console.Write($"{this[i, j]} ");
                     }
 
-                    Console.WriteLine("");
+                    Console.WriteLine();
                 }
             }
             else
@@ -119,11 +163,11 @@ namespace chm_1
 
                 Console.WriteLine("L:");
 
-                for (uint i = 0; i < Size; i++)
+                for (var i = 0; i < Size; i++)
                 {
-                    for (uint j = 0; j < Size; j++)
+                    for (var j = 0; j < Size; j++)
                     {
-                        Console.Write(L(i, j));
+                        Console.Write($"{L(i, j)} ");
                     }
 
                     Console.WriteLine();
@@ -131,11 +175,11 @@ namespace chm_1
 
                 Console.WriteLine("U:");
 
-                for (uint i = 0; i < Size; i++)
+                for (var i = 0; i < Size; i++)
                 {
-                    for (uint j = 0; j < Size; j++)
+                    for (var j = 0; j < Size; j++)
                     {
-                        Console.Write(U(i, j));
+                        Console.Write($"{U(i, j)} ");
                     }
 
                     Console.WriteLine();
@@ -143,7 +187,7 @@ namespace chm_1
             }
         }
 
-        public double U(uint i, uint j)
+        public double U(int i, int j)
         {
             if (i == j)
             {
@@ -153,12 +197,12 @@ namespace chm_1
             return i < j ? this[i, j] : 0.0;
         }
 
-        public double L(uint i, uint j)
+        public double L(int i, int j)
         {
             return i >= j ? this[i, j] : 0.0;
         }
 
-        private double GetElement(uint i, uint j)
+        private double GetElement(int i, int j)
         {
             if (i == j)
             {

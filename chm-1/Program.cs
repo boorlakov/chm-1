@@ -21,6 +21,8 @@ namespace chm_1
             matrixA.LU_decomposition();
 
             matrixA.Pprint();
+
+            matrixA.check_decomposition();
         }
     }
 }
