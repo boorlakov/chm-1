@@ -9,17 +9,24 @@ namespace chm_1
     /// </summary>
     public class Matrix
     {
-        /// al is for elements of lower triangular part of matrix
+        /// <summary>
+        ///     al is for elements of lower triangular part of matrix
+        /// </summary>
+        /// <returns></returns>
         private readonly double[] _al;
 
-        /// au is for elements of upper triangular part of matrix
+        /// <summary>
+        ///     au is for elements of upper triangular part of matrix
+        /// </summary>
         private readonly double[] _au;
 
         /// di is for diagonal elements
         private readonly double[] _di;
 
-        /// ia is for profile matrix. i.e. by manipulating ia elements we can use our matrix
-        /// much more time and memory efficient
+        /// <summary>
+        ///     ia is for profile matrix. i.e. by manipulating ia elements we can use our matrix
+        ///     much more time and memory efficient
+        /// </summary>
         private readonly int[] _ia;
 
         private bool _decomposed = false;
@@ -42,7 +49,7 @@ namespace chm_1
         }
 
         /// <summary>
-        /// Warning: accessing the data in that way is not fast
+        ///     Warning: accessing the data in that way is not fast
         /// </summary>
         /// <param name="i"> row </param>
         /// <param name="j"> column </param>
@@ -50,6 +57,11 @@ namespace chm_1
 
         private uint Size { get; }
 
+        /// <summary>
+        ///     LU-decomposition with value=1 in diagonal elements of U matrix.
+        ///     Corrupts base object. To access data as one matrix you need to build it from L and U.
+        /// </summary>
+        /// <exception cref="DivideByZeroException"></exception>
         public void LU_decomposition()
         {
             for (var i = 1; i < Size; i++)
@@ -92,7 +104,7 @@ namespace chm_1
 
                     if (_di[j] == 0.0)
                     {
-                        throw new Exception($"No zero dividing. DEBUG INFO: [i:{i}; j+1:{j + 1}]");
+                        throw new DivideByZeroException($"No zero dividing. DEBUG INFO: [i:{i}; j:{j}]");
                     }
 
                     _au[ii] /= _di[j];
@@ -106,13 +118,12 @@ namespace chm_1
         }
 
         /// <summary>
-        /// Was made for debugging LU-decomposition
+        ///     Was made for debugging LU-decomposition
         /// </summary>
         /// <returns></returns>
-        public bool check_decomposition()
+        public void check_decomposition()
         {
             Console.WriteLine("\nLU-check:");
-            var correctness = true;
 
             for (var i = 0; i < Size; i++)
             {
@@ -125,20 +136,17 @@ namespace chm_1
                         c += L(i, k) * U(k, j);
                     }
 
-                    // this wont work
-                    if (c != this[i, j])
-                    {
-                        correctness = false;
-                    }
-
                     Console.Write($"{c} ");
                 }
 
                 Console.WriteLine();
             }
-
-            return correctness;
         }
+
+        /// <summary>
+        ///     Perfect print is using for debugging profile format.
+        ///     Prints as matrix is in default format.
+        /// </summary>
         public void Pprint()
         {
             Console.WriteLine("\nMatrix PPRINT:\n");
@@ -187,6 +195,12 @@ namespace chm_1
             }
         }
 
+        /// <summary>
+        ///     u[i][j] of Upper triangular matrix U
+        /// </summary>
+        /// <param name="i"> rows </param>
+        /// <param name="j"> columns</param>
+        /// <returns></returns>
         public double U(int i, int j)
         {
             if (i == j)
@@ -197,11 +211,25 @@ namespace chm_1
             return i < j ? this[i, j] : 0.0;
         }
 
+        /// <summary>
+        ///     l[i][j] of Upper triangular matrix L
+        /// </summary>
+        /// <param name="i"> rows </param>
+        /// <param name="j"> columns</param>
+        /// <returns></returns>
         public double L(int i, int j)
         {
             return i >= j ? this[i, j] : 0.0;
         }
 
+        /// <summary>
+        ///     WARNING: Accessing data this way is not efficient
+        ///     Because of profile format we need to refer A[i][j] special way. 
+        //      We have that method for accessing data more naturally.    
+        /// </summary>
+        /// <param name="i"> rows </param>
+        /// <param name="j"> columns </param>
+        /// <returns></returns>
         private double GetElement(int i, int j)
         {
             if (i == j)
