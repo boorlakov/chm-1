@@ -5,7 +5,7 @@ using static System.Math;
 namespace chm_1
 {
     /// <summary>
-    /// Matrix as in math. Data is stored in profile format
+    ///     Matrix as in math. Data is stored in profile format
     /// </summary>
     public class Matrix
     {
@@ -118,7 +118,7 @@ namespace chm_1
         }
 
         /// <summary>
-        ///     Was made for debugging LU-decomposition
+        ///     Was made for debugging LU-decomposition.
         /// </summary>
         /// <returns></returns>
         public void check_decomposition()
@@ -151,9 +151,9 @@ namespace chm_1
         {
             Console.WriteLine("\nMatrix PPRINT:\n");
 
-            if (_decomposed == false)
+            if (!_decomposed)
             {
-                Console.WriteLine("undecomposed:");
+                Console.WriteLine("Undecomposed:");
 
                 for (var i = 0; i < Size; i++)
                 {
@@ -167,7 +167,7 @@ namespace chm_1
             }
             else
             {
-                Console.WriteLine("decomposed:");
+                Console.WriteLine("Decomposed:");
 
                 Console.WriteLine("L:");
 
@@ -203,6 +203,11 @@ namespace chm_1
         /// <returns></returns>
         public double U(int i, int j)
         {
+            if (!_decomposed)
+            {
+                throw new FieldAccessException("Matrix must be decomposed.");
+            }
+
             if (i == j)
             {
                 return 1.0;
@@ -219,13 +224,18 @@ namespace chm_1
         /// <returns></returns>
         public double L(int i, int j)
         {
+            if (!_decomposed)
+            {
+                throw new FieldAccessException("Matrix must be decomposed.");
+            }
+
             return i >= j ? this[i, j] : 0.0;
         }
 
         /// <summary>
         ///     WARNING: Accessing data this way is not efficient
         ///     Because of profile format we need to refer A[i][j] special way. 
-        //      We have that method for accessing data more naturally.    
+        ///     We have that method for accessing data more naturally.    
         /// </summary>
         /// <param name="i"> rows </param>
         /// <param name="j"> columns </param>
