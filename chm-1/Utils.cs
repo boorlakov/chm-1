@@ -37,7 +37,7 @@ namespace chm_1
             return b;
         }
 
-        public static async void ExportToFile(StreamWriter outputFile, double[] vectorX, double[] absVector)
+        public static void ExportToFile(StreamWriter outputFile, double[] vectorX, double[] absVector)
         {
             var sb = new StringBuilder();
 
@@ -55,7 +55,7 @@ namespace chm_1
 
             var text = sb.ToString();
 
-            await File.WriteAllTextAsync("output.txt", text);
+            outputFile.Write(text);
         }
 
         /// <summary>

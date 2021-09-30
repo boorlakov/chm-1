@@ -14,6 +14,7 @@ namespace chm_1
             // TODO Add try-catch construction for reading from the file 
             using var inputFile = new StreamReader(InputTextFile);
             using var inputAnswerFile = new StreamReader(InputAnswerTextFile);
+
             using var outputFile = new StreamWriter(OutputTextFile);
 
             var matrixA = Utils.MatrixFromFile(inputFile);
@@ -34,6 +35,7 @@ namespace chm_1
 
             var vectorX = Linalg.Solve(matrixA, b);
 
+            Console.WriteLine("Result:");
             Utils.Pprint(vectorX);
 
             Utils.Pprint(Linalg.Abs(vectorX, exactVectorX));
