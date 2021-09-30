@@ -4,39 +4,42 @@ namespace chm_1
 {
     public static class Linalg
     {
-        public static double[] Solve(Matrix matrixA, double[] vectorB)
+        public static double[] Solve(Matrix A, double[] b)
         {
-            var vectorY = new double[matrixA.Size];
+            var y = new double[A.Size];
             // Code for normal format matrix
             // TODO: Use profile format matrix
-            vectorY[0] = vectorB[0];
+            y[0] = b[0];
 
             // Forward prop
-            for (var i = 1; i < matrixA.Size; i++)
+            for (var i = 1; i < A.Size; i++)
             {
-                vectorY[i] = vectorB[i];
+                y[i] = b[i];
 
                 for (var j = 0; j < i; j++)
                 {
-                    vectorY[i] -= matrixA.L(i, j) * vectorY[j];
+                    y[i] -= A.L(i, j) * y[j];
+                    y[i] -= A.Al[A.Ia[i + 1] + j - 1 - i] * y[j];
                 }
+
+                y[i] /= A.L(i, i);
+                //y[i] /= A.Di[i];
             }
 
             // Backward prop
             // we can store elements in b
-            for (var i = matrixA.Size - 1; i >= 0; i--)
+            for (var i = A.Size - 1; i >= 0; i--)
             {
-                vectorB[i] = vectorY[i];
+                b[i] = y[i];
 
-                for (var j = i + 1; j < matrixA.Size; j++)
+                for (var j = i + 1; j < A.Size; j++)
                 {
-                    vectorB[i] -= matrixA.U(i, j) * vectorB[j];
+                    b[i] -= A.U(i, j) * b[j];
+                    // b[i] -= A.Au[A.Ia[j + 1] + i - j - 1] * b[j];
                 }
-
-                vectorB[i] /= matrixA.U(i, i);
             }
 
-            return vectorB;
+            return b;
         }
 
         public static double[] Abs(double[] lhs, double[] rhs)

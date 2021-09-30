@@ -64,7 +64,7 @@ namespace chm_1
         /// </summary>
         public static void Pprint(Matrix matrixA)
         {
-            Console.WriteLine("\nMatrix PPRINT:\n");
+            Console.WriteLine("\nMatrix PPRINT:");
 
             if (!matrixA.Decomposed)
             {

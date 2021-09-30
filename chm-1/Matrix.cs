@@ -13,38 +13,38 @@ namespace chm_1
         ///     al is for elements of lower triangular part of matrix
         /// </summary>
         /// <returns></returns>
-        private readonly double[] _al;
+        public readonly double[] Al;
 
         /// <summary>
         ///     au is for elements of upper triangular part of matrix
         /// </summary>
-        private readonly double[] _au;
+        public readonly double[] Au;
 
         /// di is for diagonal elements
-        private readonly double[] _di;
+        public readonly double[] Di;
 
         /// <summary>
         ///     ia is for profile matrix. i.e. by manipulating ia elements we can use our matrix
         ///     much more time and memory efficient
         /// </summary>
-        private readonly int[] _ia;
+        public readonly int[] Ia;
 
         public Matrix()
         {
-            _di = Array.Empty<double>();
-            _au = Array.Empty<double>();
-            _al = Array.Empty<double>();
-            _ia = Array.Empty<int>();
+            Di = Array.Empty<double>();
+            Au = Array.Empty<double>();
+            Al = Array.Empty<double>();
+            Ia = Array.Empty<int>();
             Decomposed = false;
         }
 
         public Matrix(int size, double[] di, int[] ia, double[] au, double[] al)
         {
             Size = size;
-            _di = di ?? throw new ArgumentNullException(nameof(di));
-            _ia = ia ?? throw new ArgumentNullException(nameof(ia));
-            _au = au ?? throw new ArgumentNullException(nameof(au));
-            _al = al ?? throw new ArgumentNullException(nameof(al));
+            Di = di ?? throw new ArgumentNullException(nameof(di));
+            Ia = ia ?? throw new ArgumentNullException(nameof(ia));
+            Au = au ?? throw new ArgumentNullException(nameof(au));
+            Al = al ?? throw new ArgumentNullException(nameof(al));
             Decomposed = false;
         }
 
@@ -69,13 +69,13 @@ namespace chm_1
             for (var i = 1; i < Size; i++)
             {
                 var sumDi = 0.0;
-                var j0 = i - (_ia[i + 1] - _ia[i]);
+                var j0 = i - (Ia[i + 1] - Ia[i]);
 
-                for (var ii = _ia[i] - 1; ii < _ia[i + 1] - 1; ii++)
+                for (var ii = Ia[i] - 1; ii < Ia[i + 1] - 1; ii++)
                 {
-                    var j = ii - _ia[i] + j0 + 1;
-                    var jBeg = _ia[j];
-                    var jEnd = _ia[j + 1];
+                    var j = ii - Ia[i] + j0 + 1;
+                    var jBeg = Ia[j] - 1;
+                    var jEnd = Ia[j + 1] - 1;
 
                     if (jBeg < jEnd)
                     {
@@ -86,34 +86,34 @@ namespace chm_1
 
                         for (var k = 0; k <= jjEnd - jjBeg - 1; k++)
                         {
-                            var indAu = _ia[j] + jjBeg - j0J + k - 1;
-                            var indAl = _ia[i] + jjBeg - j0 + k - 1;
-                            cL += _au[indAu] * _al[indAl];
+                            var indAu = Ia[j] + jjBeg - j0J + k - 1;
+                            var indAl = Ia[i] + jjBeg - j0 + k - 1;
+                            cL += Au[indAu] * Al[indAl];
                         }
 
-                        _al[ii] -= cL;
+                        Al[ii] -= cL;
                         var cU = 0.0;
 
                         for (var k = 0; k <= jjEnd - jjBeg - 1; k++)
                         {
-                            var indAl = _ia[j] + jjBeg - j0J + k - 1;
-                            var indAu = _ia[i] + jjBeg - j0 + k - 1;
-                            cU += _au[indAu] * _al[indAl];
+                            var indAl = Ia[j] + jjBeg - j0J + k - 1;
+                            var indAu = Ia[i] + jjBeg - j0 + k - 1;
+                            cU += Au[indAu] * Al[indAl];
                         }
 
-                        _au[ii] -= cU;
+                        Au[ii] -= cU;
                     }
 
-                    if (_di[j] == 0.0)
+                    if (Di[j] == 0.0)
                     {
                         throw new DivideByZeroException($"No dividing by zero. DEBUG INFO: [i:{i}; j:{j}]");
                     }
 
-                    _au[ii] /= _di[j];
-                    sumDi += _al[ii] * _au[ii];
+                    Au[ii] /= Di[j];
+                    sumDi += Al[ii] * Au[ii];
                 }
 
-                _di[i] -= sumDi;
+                Di[i] -= sumDi;
             }
 
             Decomposed = true;
@@ -196,43 +196,43 @@ namespace chm_1
         {
             if (i == j)
             {
-                return _di[i];
+                return Di[i];
             }
 
             if (i > j)
             {
-                return j + 1 <= i - (_ia[i + 1] - _ia[i]) ? 0.0 : _al[_ia[i + 1] + j - 1 - i];
+                return j + 1 <= i - (Ia[i + 1] - Ia[i]) ? 0.0 : Al[Ia[i + 1] + j - 1 - i];
             }
 
-            return i + 1 <= j - (_ia[j + 1] - _ia[j]) ? 0.0 : _au[_ia[j + 1] + i - j - 1];
+            return i + 1 <= j - (Ia[j + 1] - Ia[j]) ? 0.0 : Au[Ia[j + 1] + i - j - 1];
         }
 
         public override string ToString()
         {
             var sb = new StringBuilder($"{nameof(Matrix)}:\ndi:\n");
 
-            foreach (var item in _di)
+            foreach (var item in Di)
             {
                 sb.AppendFormat("{0} ", item);
             }
 
             sb.Append("\nia:\n");
 
-            foreach (var item in _ia)
+            foreach (var item in Ia)
             {
                 sb.AppendFormat("{0} ", item);
             }
 
             sb.Append("\nau:\n");
 
-            foreach (var item in _au)
+            foreach (var item in Au)
             {
                 sb.AppendFormat("{0} ", item);
             }
 
             sb.Append("\nal:\n");
 
-            foreach (var item in _al)
+            foreach (var item in Al)
             {
                 sb.AppendFormat("{0} ", item);
             }
