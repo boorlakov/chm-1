@@ -19,7 +19,7 @@ namespace chm_1
                 for (var j = 0; j < i; j++)
                 {
                     y[i] -= A.L(i, j) * y[j];
-                    y[i] -= A.Al[A.Ia[i + 1] + j - 1 - i] * y[j];
+                    // y[i] -= A.Al[A.Ia[i + 1] + j - 1 - i] * y[j];
                 }
 
                 y[i] /= A.L(i, i);
