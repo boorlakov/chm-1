@@ -29,26 +29,26 @@ namespace chm_1
         /// </summary>
         private readonly int[] _ia;
 
-        private bool _decomposed;
-
         public Matrix()
         {
             _di = Array.Empty<double>();
             _au = Array.Empty<double>();
             _al = Array.Empty<double>();
             _ia = Array.Empty<int>();
-            _decomposed = false;
+            Decomposed = false;
         }
 
-        public Matrix(uint size, double[] di, int[] ia, double[] au, double[] al)
+        public Matrix(int size, double[] di, int[] ia, double[] au, double[] al)
         {
             Size = size;
             _di = di ?? throw new ArgumentNullException(nameof(di));
             _ia = ia ?? throw new ArgumentNullException(nameof(ia));
             _au = au ?? throw new ArgumentNullException(nameof(au));
             _al = al ?? throw new ArgumentNullException(nameof(al));
-            _decomposed = false;
+            Decomposed = false;
         }
+
+        public bool Decomposed { get; private set; }
 
         /// <summary>
         ///     Warning: accessing the data in that way is not fast
@@ -57,7 +57,7 @@ namespace chm_1
         /// <param name="j"> column </param>
         public double this[int i, int j] => GetElement(i, j);
 
-        private uint Size { get; }
+        public int Size { get; }
 
         /// <summary>
         ///     LU-decomposition with value=1 in diagonal elements of U matrix.
@@ -116,7 +116,7 @@ namespace chm_1
                 _di[i] -= sumDi;
             }
 
-            _decomposed = true;
+            Decomposed = true;
         }
 
         /// <summary>
@@ -146,58 +146,6 @@ namespace chm_1
         }
 
         /// <summary>
-        ///     Perfect print is using for debugging profile format.
-        ///     Prints as matrix is in default format.
-        /// </summary>
-        public void Pprint()
-        {
-            Console.WriteLine("\nMatrix PPRINT:\n");
-
-            if (!_decomposed)
-            {
-                Console.WriteLine("Undecomposed:");
-
-                for (var i = 0; i < Size; i++)
-                {
-                    for (var j = 0; j < Size; j++)
-                    {
-                        Console.Write($"{this[i, j]} ");
-                    }
-
-                    Console.WriteLine();
-                }
-            }
-            else
-            {
-                Console.WriteLine("Decomposed:");
-
-                Console.WriteLine("L:");
-
-                for (var i = 0; i < Size; i++)
-                {
-                    for (var j = 0; j < Size; j++)
-                    {
-                        Console.Write($"{L(i, j)} ");
-                    }
-
-                    Console.WriteLine();
-                }
-
-                Console.WriteLine("U:");
-
-                for (var i = 0; i < Size; i++)
-                {
-                    for (var j = 0; j < Size; j++)
-                    {
-                        Console.Write($"{U(i, j)} ");
-                    }
-
-                    Console.WriteLine();
-                }
-            }
-        }
-
-        /// <summary>
         ///     u[i][j] of Upper triangular matrix U
         /// </summary>
         /// <param name="i"> rows </param>
@@ -206,7 +154,7 @@ namespace chm_1
         /// <returns></returns>
         public double U(int i, int j)
         {
-            if (!_decomposed)
+            if (!Decomposed)
             {
                 throw new FieldAccessException("Matrix must be decomposed.");
             }
@@ -228,7 +176,7 @@ namespace chm_1
         /// <returns></returns>
         public double L(int i, int j)
         {
-            if (!_decomposed)
+            if (!Decomposed)
             {
                 throw new FieldAccessException("Matrix must be decomposed.");
             }
