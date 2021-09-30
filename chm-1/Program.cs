@@ -18,14 +18,14 @@ namespace chm_1
             using var outputFile = new StreamWriter(OutputTextFile);
 
             var matrixA = Utils.MatrixFromFile(inputFile);
-            var b = Utils.VectorFromFile(inputFile);
+            var vectorB = Utils.VectorFromFile(inputFile);
             var exactVectorX = Utils.VectorFromFile(inputAnswerFile);
 
             Console.WriteLine(matrixA);
 
             Utils.Pprint(matrixA);
 
-            Utils.Pprint(b);
+            Utils.Pprint(vectorB);
 
             matrixA.LU_decomposition();
 
@@ -33,9 +33,9 @@ namespace chm_1
 
             matrixA.check_decomposition();
 
-            var vectorX = Linalg.Solve(matrixA, b);
+            var vectorX = Linalg.Solve(matrixA, vectorB);
 
-            Console.WriteLine("Result:");
+            Console.WriteLine("\nResult:");
             Utils.Pprint(vectorX);
 
             Utils.Pprint(Linalg.Abs(vectorX, exactVectorX));
