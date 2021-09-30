@@ -11,7 +11,6 @@ namespace chm_1
 
         static void Main(string[] args)
         {
-            // TODO Add try-catch construction for reading from the file 
             using var inputFile = new StreamReader(InputTextFile);
             using var inputAnswerFile = new StreamReader(InputAnswerTextFile);
 
@@ -32,7 +31,7 @@ namespace chm_1
             Utils.Pprint(matrixA);
 
             matrixA.check_decomposition();
-
+            Console.WriteLine(matrixA);
             var vectorX = Linalg.Solve(matrixA, vectorB);
 
             Console.WriteLine("\nResult:");
