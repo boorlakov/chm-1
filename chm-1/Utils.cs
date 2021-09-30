@@ -37,7 +37,7 @@ namespace chm_1
             return b;
         }
 
-        public static async void ExportToFile(StreamReader outputFile, double[] vectorX, double[] absVector)
+        public static async void ExportToFile(StreamWriter outputFile, double[] vectorX, double[] absVector)
         {
             var sb = new StringBuilder();
 
@@ -109,6 +109,7 @@ namespace chm_1
                 }
             }
         }
+
         public static void Pprint(IEnumerable<double> vectorX)
         {
             Console.WriteLine("\nVector PPRINT:\n");

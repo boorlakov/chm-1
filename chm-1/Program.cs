@@ -14,7 +14,7 @@ namespace chm_1
             // TODO Add try-catch construction for reading from the file 
             using var inputFile = new StreamReader(InputTextFile);
             using var inputAnswerFile = new StreamReader(InputAnswerTextFile);
-            using var outputFile = new StreamReader(OutputTextFile);
+            using var outputFile = new StreamWriter(OutputTextFile);
 
             var matrixA = Utils.MatrixFromFile(inputFile);
             var b = Utils.VectorFromFile(inputFile);
@@ -24,6 +24,8 @@ namespace chm_1
 
             Utils.Pprint(matrixA);
 
+            Utils.Pprint(b);
+
             matrixA.LU_decomposition();
 
             Utils.Pprint(matrixA);
@@ -31,6 +33,10 @@ namespace chm_1
             matrixA.check_decomposition();
 
             var vectorX = Linalg.Solve(matrixA, b);
+
+            Utils.Pprint(vectorX);
+
+            Utils.Pprint(Linalg.Abs(vectorX, exactVectorX));
 
             Utils.ExportToFile(outputFile, vectorX, Linalg.Abs(vectorX, exactVectorX));
         }

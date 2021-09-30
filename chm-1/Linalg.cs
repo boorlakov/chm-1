@@ -24,7 +24,7 @@ namespace chm_1
 
             // Backward prop
             // we can store elements in b
-            for (var i = matrixA.Size - 1; i > 0; i--)
+            for (var i = matrixA.Size - 1; i >= 0; i--)
             {
                 vectorB[i] = vectorY[i];
 
