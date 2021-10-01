@@ -34,7 +34,7 @@ namespace chm_1
             b[A.Size - 1] = y[A.Size - 1];
 
             // Backward Substitution
-            // We can store elements in b, because now b is useless
+            // We can store elements in b, because now b is useless.
             for (var i = A.Size - 2; i >= 0; i--)
             {
                 b[i] = y[i];
