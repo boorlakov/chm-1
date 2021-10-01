@@ -81,13 +81,14 @@ namespace chm_1
                     {
                         var j0J = j - (jEnd - jBeg);
                         var jjBeg = Max(j0, j0J);
-                        var jjEnd = Max(j, i - 1);
+                        var jjEnd = Min(j, i - 1);
                         var cL = 0.0;
 
                         for (var k = 0; k <= jjEnd - jjBeg - 1; k++)
                         {
                             var indAu = Ia[j] + jjBeg - j0J + k - 1;
                             var indAl = Ia[i] + jjBeg - j0 + k - 1;
+
                             cL += Au[indAu] * Al[indAl];
                         }
 
@@ -98,6 +99,7 @@ namespace chm_1
                         {
                             var indAl = Ia[j] + jjBeg - j0J + k - 1;
                             var indAu = Ia[i] + jjBeg - j0 + k - 1;
+
                             cU += Au[indAu] * Al[indAl];
                         }
 
