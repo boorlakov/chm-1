@@ -22,11 +22,12 @@ namespace chm_1
                 y[i] /= A.Di[i];
             }
 
+            // DEBUG INFO
             Console.WriteLine("y:");
 
             foreach (var item in y)
             {
-                Console.Write($"{item} ");
+                Console.Write($"{item:G15} ");
             }
 
             Console.WriteLine();

@@ -127,6 +127,7 @@ namespace chm_1
         /// <returns></returns>
         public void check_decomposition()
         {
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("\nLU-check:");
 
             for (var i = 0; i < Size; i++)
@@ -140,11 +141,13 @@ namespace chm_1
                         c += L(i, k) * U(k, j);
                     }
 
-                    Console.Write($"{c} ");
+                    Console.Write($"{c:G15} ");
                 }
 
                 Console.WriteLine();
             }
+
+            Console.ResetColor();
         }
 
         /// <summary>
@@ -215,28 +218,28 @@ namespace chm_1
 
             foreach (var item in Di)
             {
-                sb.AppendFormat("{0} ", item);
+                sb.AppendFormat("{0:G15} ", item);
             }
 
             sb.Append("\nia:\n");
 
             foreach (var item in Ia)
             {
-                sb.AppendFormat("{0} ", item);
+                sb.AppendFormat("{0:G15} ", item);
             }
 
             sb.Append("\nau:\n");
 
             foreach (var item in Au)
             {
-                sb.AppendFormat("{0} ", item);
+                sb.AppendFormat("{0:G15} ", item);
             }
 
             sb.Append("\nal:\n");
 
             foreach (var item in Al)
             {
-                sb.AppendFormat("{0} ", item);
+                sb.AppendFormat("{0:G15} ", item);
             }
 
             return sb.ToString();

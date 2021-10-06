@@ -56,14 +56,14 @@ namespace chm_1
 
             foreach (var item in vectorX)
             {
-                sb.AppendFormat("{0} ", item);
+                sb.AppendFormat("{0:G15} ", item);
             }
 
             sb.Append('\n');
 
             foreach (var item in absVector)
             {
-                sb.AppendFormat("{0} ", item);
+                sb.AppendFormat("{0:G15} ", item);
             }
 
             var text = sb.ToString();
@@ -77,6 +77,8 @@ namespace chm_1
         /// </summary>
         public static void Pprint(Matrix matrixA)
         {
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+
             Console.WriteLine("\nMatrix PPRINT:");
 
             if (!matrixA.Decomposed)
@@ -87,7 +89,7 @@ namespace chm_1
                 {
                     for (var j = 0; j < matrixA.Size; j++)
                     {
-                        Console.Write($"{matrixA[i, j]} ");
+                        Console.Write($"{matrixA[i, j]:G15} ");
                     }
 
                     Console.WriteLine();
@@ -95,8 +97,8 @@ namespace chm_1
             }
             else
             {
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
                 Console.WriteLine("Decomposed:");
-
                 Console.WriteLine("L:");
 
                 for (var i = 0; i < matrixA.Size; i++)
@@ -121,15 +123,17 @@ namespace chm_1
                     Console.WriteLine();
                 }
             }
+
+            Console.ResetColor();
         }
 
         public static void Pprint(IEnumerable<double> vectorX)
         {
-            Console.WriteLine("\nVector PPRINT:\n");
+            Console.WriteLine("\nVector PPRINT:");
 
             foreach (var item in vectorX)
             {
-                Console.Write("{0} ", item);
+                Console.Write("{0:G15} ", item);
             }
 
             Console.WriteLine();

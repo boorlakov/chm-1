@@ -20,8 +20,6 @@ namespace chm_1
             var vectorB = Utils.VectorFromFile(inputFile);
             var exactVectorX = Utils.VectorFromFile(inputAnswerFile);
 
-            Console.WriteLine(matrixA);
-
             Utils.Pprint(matrixA);
 
             Utils.Pprint(vectorB);
@@ -31,13 +29,15 @@ namespace chm_1
             Utils.Pprint(matrixA);
 
             matrixA.check_decomposition();
-            Console.WriteLine(matrixA);
+
             var vectorX = Linalg.Solve(matrixA, vectorB);
 
             Console.WriteLine("\nResult:");
             Utils.Pprint(vectorX);
 
+            Console.ForegroundColor = ConsoleColor.DarkRed;
             Utils.Pprint(Linalg.Abs(vectorX, exactVectorX));
+            Console.ResetColor();
 
             Utils.ExportToFile(outputFile, vectorX, Linalg.Abs(vectorX, exactVectorX));
         }
