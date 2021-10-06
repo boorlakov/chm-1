@@ -12,30 +12,43 @@ namespace chm_1
         /// <returns>Complete matrix</returns>
         public static Matrix MatrixFromFile(StreamReader file)
         {
-            var ln = file.ReadLine();
+            var ln = file.ReadLine()!
+                .Trim();
+
             var size = int.Parse(ln!);
 
-            ln = file.ReadLine();
-            var di = ln!.Split(' ').Select(double.Parse).ToArray();
+            var di = ReadDoubles(file);
 
-            ln = file.ReadLine();
-            var ia = ln!.Split(' ').Select(int.Parse).ToArray();
+            var ia = ReadInts(file);
 
-            ln = file.ReadLine();
-            var au = ln!.Split(' ').Select(double.Parse).ToArray();
+            var au = ReadDoubles(file);
 
-            ln = file.ReadLine();
-            var al = ln!.Split(' ').Select(double.Parse).ToArray();
+            var al = ReadDoubles(file);
 
             return new Matrix(size, di, ia, au, al);
         }
 
-        public static double[] VectorFromFile(StreamReader file)
+        private static double[] ReadDoubles(StreamReader file)
         {
-            var ln = file.ReadLine();
-            var b = ln!.Split(' ').Select(double.Parse).ToArray();
-            return b;
+            return file
+                .ReadLine()!
+                .Trim()
+                .Split(' ')
+                .Select(double.Parse)
+                .ToArray();
         }
+
+        private static int[] ReadInts(StreamReader file)
+        {
+            return file
+                .ReadLine()!
+                .Trim()
+                .Split(' ')
+                .Select(int.Parse)
+                .ToArray();
+        }
+
+        public static double[] VectorFromFile(StreamReader file) => ReadDoubles(file);
 
         public static void ExportToFile(StreamWriter outputFile, double[] vectorX, double[] absVector)
         {
