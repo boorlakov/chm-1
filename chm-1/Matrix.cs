@@ -64,7 +64,7 @@ namespace chm_1
         ///     Corrupts base object. To access data as one matrix you need to build it from L and U.
         /// </summary>
         /// <exception cref="DivideByZeroException"> If diagonal element is zero </exception>
-        public void LU_decomposition()
+        public void LuDecomposition()
         {
             for (var i = 1; i < Size; i++)
             {
@@ -125,7 +125,7 @@ namespace chm_1
         ///     Was made for debugging LU-decomposition.
         /// </summary>
         /// <returns></returns>
-        public void check_decomposition()
+        public void CheckDecomposition()
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("\nLU-check:");

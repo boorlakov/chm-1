@@ -24,11 +24,11 @@ namespace chm_1
 
             Utils.Pprint(vectorB);
 
-            matrixA.LU_decomposition();
+            matrixA.LuDecomposition();
 
             Utils.Pprint(matrixA);
 
-            matrixA.check_decomposition();
+            matrixA.CheckDecomposition();
 
             var vectorX = Linalg.Solve(matrixA, vectorB);
 
