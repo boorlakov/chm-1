@@ -7,10 +7,9 @@ namespace chm_1
         public static double[] Solve(Matrix A, double[] b)
         {
             var y = new double[A.Size];
-            y[0] = b[0];
 
             // Forward Substitution
-            for (var i = 1; i < A.Size; i++)
+            for (var i = 0; i < A.Size; i++)
             {
                 y[i] = b[i];
 
@@ -19,7 +18,10 @@ namespace chm_1
                     y[i] -= A.Al[A.Ia[i + 1] + j - 1 - i] * y[j];
                 }
 
-                y[i] /= A.Di[i];
+                if (!A.Di[i].Equals(0.0))
+                {
+                    y[i] /= A.Di[i];
+                }
             }
 
             // DEBUG INFO
@@ -32,17 +34,15 @@ namespace chm_1
 
             Console.WriteLine();
 
-            b[A.Size - 1] = y[A.Size - 1];
-
             // Backward Substitution
             // We can store elements in b, because now b is useless.
-            for (var i = A.Size - 2; i >= 0; i--)
+            for (var i = A.Size - 1; i >= 0; i--)
             {
                 b[i] = y[i];
 
                 for (var j = i + 1; j < A.Size; j++)
                 {
-                    if (!(i + 1 <= j - (A.Ia[j + 1] - A.Ia[j])))
+                    if (i + 1 > j - (A.Ia[j + 1] - A.Ia[j]))
                     {
                         b[i] -= A.Au[A.Ia[j + 1] + i - j - 1] * b[j];
                     }
