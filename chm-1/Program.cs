@@ -17,7 +17,9 @@ namespace chm_1
             using var outputFile = new StreamWriter(OutputTextFile);
 
             var matrixA = Utils.MatrixFromFile(inputFile);
+            var matrixA1 = Utils.MatrixFromFile(inputFile);
             var vectorB = Utils.VectorFromFile(inputFile);
+            var vectorB1 = Utils.VectorFromFile(inputFile);
             var exactVectorX = Utils.VectorFromFile(inputAnswerFile);
 
             Utils.Pprint(matrixA);

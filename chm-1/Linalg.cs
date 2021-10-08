@@ -12,10 +12,11 @@ namespace chm_1
             for (var i = 0; i < A.Size; i++)
             {
                 y[i] = b[i];
+                var indAl = A.Ia[i + 1] - 1 - i;
 
                 for (var j = i - (A.Ia[i + 1] - A.Ia[i]); j < i; j++)
                 {
-                    y[i] -= A.Al[A.Ia[i + 1] + j - 1 - i] * y[j];
+                    y[i] -= A.Al[indAl + j] * y[j];
                 }
 
                 if (!A.Di[i].Equals(0.0))
@@ -46,6 +47,46 @@ namespace chm_1
                     {
                         b[i] -= A.Au[A.Ia[j + 1] + i - j - 1] * b[j];
                     }
+                }
+            }
+
+            return b;
+        }
+
+        public static double[] SolveGauss(Matrix A, double[] b)
+        {
+            for (var sourceRow = 0; sourceRow + 1 < A.Size; sourceRow++)
+            {
+                for (var destRow = sourceRow + 1; destRow < A.Size; destRow++)
+                {
+                    var df = A[sourceRow, sourceRow];
+                    var sf = A[destRow, sourceRow];
+
+                    for (var i = 0; i < A.Size; i++)
+                    {
+                        A[destRow, i] = A[destRow, i] * df - A[sourceRow, i] * sf;
+                    }
+                }
+            }
+
+            for (var row = A.Size - 1; row >= 0; row--)
+            {
+                var f = A[row, row];
+
+                if (f == 0)
+                {
+                    throw new Exception("No solution");
+                }
+
+                for (var i = 0; i < A.Size; i++)
+                {
+                    A[row, i] /= f;
+                }
+
+                for (var destRow = 0; destRow < row; destRow++)
+                {
+                    A[destRow, A.Size - 1] -= A[destRow, row] * A[row, A.Size - 1];
+                    A[destRow, row] = 0;
                 }
             }
 

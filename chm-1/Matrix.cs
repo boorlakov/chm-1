@@ -55,7 +55,11 @@ namespace chm_1
         /// </summary>
         /// <param name="i"> row </param>
         /// <param name="j"> column </param>
-        public double this[int i, int j] => GetElement(i, j);
+        public double this[int i, int j]
+        {
+            get => GetElement(i, j);
+            set => SetElement(i, j, value);
+        }
 
         public int Size { get; }
 
@@ -211,7 +215,30 @@ namespace chm_1
 
             return i + 1 <= j - (Ia[j + 1] - Ia[j]) ? 0.0 : Au[Ia[j + 1] + i - j - 1];
         }
-
+        void SetElement(int i, int j, double value)
+        {
+            if (i == j)
+            {
+                Di[i] = value;
+            }
+            else
+            {
+                if (i > j)
+                {
+                    if (!(j <= i - (Ia[i + 1] - Ia[i]) + 1))
+                    {
+                        Al[Ia[i + 1] + j - 1 - i] = value;
+                    }
+                }
+                else
+                {
+                    if (!(i < j - (Ia[j + 1] - Ia[j]) + 1))
+                    {
+                        Au[Ia[j + 1] + i - j - 1] = value;
+                    }
+                }
+            }
+        }
         public override string ToString()
         {
             var sb = new StringBuilder($"{nameof(Matrix)}:\ndi:\n");
