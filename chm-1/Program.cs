@@ -17,9 +17,10 @@ namespace chm_1
             using var outputFile = new StreamWriter(OutputTextFile);
 
             var matrixA = Utils.MatrixFromFile(inputFile);
-            var matrixA1 = Utils.MatrixFromFile(inputFile);
+            var matrixA1 = new double[matrixA.Size, matrixA.Size];
+
             var vectorB = Utils.VectorFromFile(inputFile);
-            var vectorB1 = Utils.VectorFromFile(inputFile);
+            var vectorB1 = vectorB;
             var exactVectorX = Utils.VectorFromFile(inputAnswerFile);
 
             Utils.Pprint(matrixA);
@@ -32,16 +33,19 @@ namespace chm_1
 
             matrixA.CheckDecomposition();
 
-            var vectorX = Linalg.Solve(matrixA, vectorB);
+            var vectorX = LinAlg.Solve(matrixA, vectorB);
+            var vectorX1 = LinAlg.Gauss.Solve(matrixA1, vectorB1);
 
             Console.WriteLine("\nResult:");
             Utils.Pprint(vectorX);
+            Console.WriteLine("\nBy Gaussian elimination:");
+            Utils.Pprint(vectorX1);
 
             Console.ForegroundColor = ConsoleColor.DarkRed;
-            Utils.Pprint(Linalg.Abs(vectorX, exactVectorX));
+            Utils.Pprint(LinAlg.Abs(vectorX, exactVectorX));
             Console.ResetColor();
 
-            Utils.ExportToFile(outputFile, vectorX, Linalg.Abs(vectorX, exactVectorX));
+            Utils.ExportToFile(outputFile, vectorX, LinAlg.Abs(vectorX, exactVectorX));
         }
     }
 }

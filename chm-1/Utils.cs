@@ -15,7 +15,7 @@ namespace chm_1
             var ln = file.ReadLine()!
                 .Trim();
 
-            var size = int.Parse(ln!);
+            var size = int.Parse(ln);
 
             var di = ReadDoubles(file);
 
