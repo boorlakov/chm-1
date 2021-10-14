@@ -17,10 +17,22 @@ namespace chm_1
             using var outputFile = new StreamWriter(OutputTextFile);
 
             var matrixA = Utils.MatrixFromFile(inputFile);
+
             var matrixA1 = new double[matrixA.Size, matrixA.Size];
 
+            for (var i = 0; i < matrixA.Size; i++)
+            {
+                for (var j = 0; j < matrixA.Size; j++)
+                {
+                    matrixA1[i, j] = matrixA[i, j];
+                }
+            }
+
             var vectorB = Utils.VectorFromFile(inputFile);
-            var vectorB1 = vectorB;
+
+            var vectorB1 = new double[vectorB.Length];
+            vectorB.AsSpan().CopyTo(vectorB1);
+
             var exactVectorX = Utils.VectorFromFile(inputAnswerFile);
 
             Utils.Pprint(matrixA);

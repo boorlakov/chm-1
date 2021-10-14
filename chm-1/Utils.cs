@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -127,7 +126,7 @@ namespace chm_1
             Console.ResetColor();
         }
 
-        public static void Pprint(IEnumerable<double> vectorX)
+        public static void Pprint(double[] vectorX)
         {
             Console.WriteLine("\nVector PPRINT:");
 

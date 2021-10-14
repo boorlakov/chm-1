@@ -6,9 +6,17 @@ namespace chm_1
     {
         public static double[] Solve(Matrix matrixA, double[] vectorB)
         {
+            var vectorY = ForwardSubstitution(matrixA, vectorB);
+
+            vectorB = BackSubstitution(matrixA, vectorB, vectorY);
+
+            return vectorB;
+        }
+
+        public static double[] ForwardSubstitution(Matrix matrixA, double[] vectorB)
+        {
             var vectorY = new double[matrixA.Size];
 
-            // Forward Substitution
             for (var i = 0; i < matrixA.Size; i++)
             {
                 vectorY[i] = vectorB[i];
@@ -25,18 +33,11 @@ namespace chm_1
                 }
             }
 
-            // DEBUG INFO
-            Console.WriteLine("y:");
+            return vectorY;
+        }
 
-            foreach (var item in vectorY)
-            {
-                Console.Write($"{item:G15} ");
-            }
-
-            Console.WriteLine();
-
-            // Backward Substitution
-            // We can store elements in vectorB, because now vectorB is useless.
+        public static double[] BackSubstitution(Matrix matrixA, double[] vectorB, double[] vectorY)
+        {
             for (var i = matrixA.Size - 1; i >= 0; i--)
             {
                 vectorB[i] = vectorY[i];
@@ -69,9 +70,45 @@ namespace chm_1
         {
             public static double[] Solve(double[,] matrixA, double[] vectorB)
             {
-                const int axisX = 0;
+                var extendedMatrix = Elimination(matrixA, vectorB);
 
-                var extendedMatrixRowSize = matrixA.GetLength(axisX);
+                var vectorX = BackSubstitution(extendedMatrix);
+
+                return vectorX;
+            }
+
+            private static double[] BackSubstitution(double[,] extendedMatrix)
+            {
+                var rowSize = extendedMatrix.GetLength(Axis.X);
+                var colSize = extendedMatrix.GetLength(Axis.Y);
+
+                var vectorX = new double[rowSize];
+
+                vectorX[rowSize - 1] =
+                    extendedMatrix[rowSize - 1, colSize - 1] / extendedMatrix[rowSize - 1, colSize - 2];
+
+                // ALGO is here
+                for (var i = rowSize - 2; i >= 0; i--)
+                {
+                    vectorX[i] = extendedMatrix[i, colSize - 1];
+
+                    for (var j = i + 1; j < rowSize; j++)
+                    {
+                        vectorX[i] -= extendedMatrix[i, j] * extendedMatrix[j, colSize - 1];
+                    }
+
+                    if (!extendedMatrix[i, i].Equals(0.0))
+                    {
+                        vectorX[i] /= extendedMatrix[i, i];
+                    }
+                }
+
+                return vectorX;
+            }
+
+            private static double[,] Elimination(double[,] matrixA, double[] vectorB)
+            {
+                var extendedMatrixRowSize = matrixA.GetLength(Axis.X);
                 var extendedMatrixColSize = extendedMatrixRowSize + 1;
 
                 var extendedMatrix = ExtendMatrix(matrixA, vectorB);
@@ -107,14 +144,12 @@ namespace chm_1
                     }
                 }
 
-                return vectorB;
+                return extendedMatrix;
             }
 
             private static void SwapRows(int src, int dst, double[,] matrixA)
             {
-                const int axisY = 1;
-
-                for (var j = 0; j < matrixA.GetLength(axisY); j++)
+                for (var j = 0; j < matrixA.GetLength(Axis.Y); j++)
                 {
                     Swap(ref matrixA[src, j], ref matrixA[dst, j]);
                 }
@@ -122,7 +157,7 @@ namespace chm_1
 
             private static double[,] ExtendMatrix(double[,] matrixA, double[] vectorB)
             {
-                var extendedMatrixRowSize = matrixA.GetLength(0);
+                var extendedMatrixRowSize = matrixA.GetLength(Axis.X);
                 var extendedMatrixColSize = extendedMatrixRowSize + 1;
 
                 var extendedMatrix = new double[extendedMatrixRowSize, extendedMatrixColSize];
@@ -158,6 +193,12 @@ namespace chm_1
                 }
 
                 return argmax;
+            }
+
+            private abstract class Axis
+            {
+                public const int X = 0;
+                public const int Y = 1;
             }
         }
     }
