@@ -48,12 +48,16 @@ namespace chm_1
             var vectorX = LinAlg.Solve(matrixA, vectorB);
             var vectorX1 = LinAlg.Gauss.Solve(matrixA1, vectorB1);
 
-            Console.WriteLine("\nResult:");
+            Console.ForegroundColor = ConsoleColor.Black;
+            Console.Write("\nResult:");
             Utils.Pprint(vectorX);
-            Console.WriteLine("\nBy Gaussian elimination:");
+
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.Write("\nBy Gaussian elimination:");
             Utils.Pprint(vectorX1);
 
             Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.Write("\nError measure:");
             Utils.Pprint(LinAlg.Abs(vectorX, exactVectorX));
             Console.ResetColor();
 

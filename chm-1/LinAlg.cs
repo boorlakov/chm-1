@@ -93,10 +93,7 @@ namespace chm_1
                         vectorX[row] -= extendedMatrix[row, col] * extendedMatrix[col, colSize - 1];
                     }
 
-                    if (!extendedMatrix[row, row].Equals(0.0))
-                    {
-                        vectorX[row] /= extendedMatrix[row, row];
-                    }
+                    vectorX[row] /= extendedMatrix[row, row];
                 }
 
                 return vectorX;
@@ -143,32 +140,34 @@ namespace chm_1
                 return extendedMatrix;
             }
 
-            private static void SwapRows(int src, int dst, double[,] matrixA)
+            private static void SwapRows(int srcRow, int dstRow, double[,] matrixA)
             {
-                for (var j = 0; j < matrixA.GetLength(Axis.Y); j++)
+                var colSize = matrixA.GetLength(Axis.Y);
+
+                for (var col = 0; col < colSize; col++)
                 {
-                    Swap(ref matrixA[src, j], ref matrixA[dst, j]);
+                    Swap(ref matrixA[srcRow, col], ref matrixA[dstRow, col]);
                 }
             }
 
             private static double[,] ExtendMatrix(double[,] matrixA, double[] vectorB)
             {
-                var extendedMatrixRowSize = matrixA.GetLength(Axis.X);
-                var extendedMatrixColSize = extendedMatrixRowSize + 1;
+                var rowSize = matrixA.GetLength(Axis.X);
+                var colSize = rowSize + 1;
 
-                var extendedMatrix = new double[extendedMatrixRowSize, extendedMatrixColSize];
+                var extendedMatrix = new double[rowSize, colSize];
 
-                for (var i = 0; i < extendedMatrixRowSize; i++)
+                for (var row = 0; row < rowSize; row++)
                 {
-                    for (var j = 0; j < extendedMatrixRowSize; j++)
+                    for (var col = 0; col < rowSize; col++)
                     {
-                        extendedMatrix[i, j] = matrixA[i, j];
+                        extendedMatrix[row, col] = matrixA[row, col];
                     }
                 }
 
-                for (var i = 0; i < extendedMatrixRowSize; i++)
+                for (var row = 0; row < rowSize; row++)
                 {
-                    extendedMatrix[i, extendedMatrixColSize - 1] = vectorB[i];
+                    extendedMatrix[row, colSize - 1] = vectorB[row];
                 }
 
                 return extendedMatrix;
@@ -176,19 +175,22 @@ namespace chm_1
 
             private static void Swap(ref double src, ref double dst) => (src, dst) = (dst, src);
 
-            private static int ArgMax(int src, int dst, int pivotCol, double[,] matrixA)
+            private static int ArgMax(int srcRow, int dstRow, int pivotCol, double[,] matrixA)
             {
-                var argmax = -1;
+                // argmax equals to 0, because row (in theory) can have only zero-elements.
+                var maxRow = 0;
+                var elem = 0.0;
 
-                for (var i = src; i < dst; i++)
+                for (var row = srcRow; row < dstRow; row++)
                 {
-                    if (argmax <= Math.Abs(matrixA[i, pivotCol]))
+                    if (elem < Math.Abs(matrixA[row, pivotCol]))
                     {
-                        argmax = i;
+                        elem = Math.Abs(matrixA[row, pivotCol]);
+                        maxRow = row;
                     }
                 }
 
-                return argmax;
+                return maxRow;
             }
 
             private abstract class Axis
