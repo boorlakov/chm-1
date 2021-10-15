@@ -215,6 +215,7 @@ namespace chm_1
 
             return i + 1 <= j - (Ia[j + 1] - Ia[j]) ? 0.0 : Au[Ia[j + 1] + i - j - 1];
         }
+
         void SetElement(int i, int j, double value)
         {
             if (i == j)
@@ -239,6 +240,7 @@ namespace chm_1
                 }
             }
         }
+
         public override string ToString()
         {
             var sb = new StringBuilder($"{nameof(Matrix)}:\ndi:\n");

@@ -13,7 +13,7 @@ namespace chm_1
             return vectorB;
         }
 
-        public static double[] ForwardSubstitution(Matrix matrixA, double[] vectorB)
+        private static double[] ForwardSubstitution(Matrix matrixA, double[] vectorB)
         {
             var vectorY = new double[matrixA.Size];
 
@@ -36,7 +36,7 @@ namespace chm_1
             return vectorY;
         }
 
-        public static double[] BackSubstitution(Matrix matrixA, double[] vectorB, double[] vectorY)
+        private static double[] BackSubstitution(Matrix matrixA, double[] vectorB, double[] vectorY)
         {
             for (var i = matrixA.Size - 1; i >= 0; i--)
             {
@@ -84,22 +84,18 @@ namespace chm_1
 
                 var vectorX = new double[rowSize];
 
-                vectorX[rowSize - 1] =
-                    extendedMatrix[rowSize - 1, colSize - 1] / extendedMatrix[rowSize - 1, colSize - 2];
-
-                // ALGO is here
-                for (var i = rowSize - 2; i >= 0; i--)
+                for (var row = rowSize - 1; row >= 0; row--)
                 {
-                    vectorX[i] = extendedMatrix[i, colSize - 1];
+                    vectorX[row] = extendedMatrix[row, colSize - 1];
 
-                    for (var j = i + 1; j < rowSize; j++)
+                    for (var col = row + 1; col < rowSize; col++)
                     {
-                        vectorX[i] -= extendedMatrix[i, j] * extendedMatrix[j, colSize - 1];
+                        vectorX[row] -= extendedMatrix[row, col] * extendedMatrix[col, colSize - 1];
                     }
 
-                    if (!extendedMatrix[i, i].Equals(0.0))
+                    if (!extendedMatrix[row, row].Equals(0.0))
                     {
-                        vectorX[i] /= extendedMatrix[i, i];
+                        vectorX[row] /= extendedMatrix[row, row];
                     }
                 }
 
@@ -108,34 +104,34 @@ namespace chm_1
 
             private static double[,] Elimination(double[,] matrixA, double[] vectorB)
             {
-                var extendedMatrixRowSize = matrixA.GetLength(Axis.X);
-                var extendedMatrixColSize = extendedMatrixRowSize + 1;
+                var rowSize = matrixA.GetLength(Axis.X);
+                var colSize = rowSize + 1;
 
                 var extendedMatrix = ExtendMatrix(matrixA, vectorB);
 
                 var pivotRow = 0;
                 var pivotCol = 0;
 
-                while (pivotRow < extendedMatrixRowSize && pivotCol < extendedMatrixColSize)
+                while (pivotRow < rowSize && pivotCol < colSize)
                 {
-                    var iMax = ArgMax(pivotRow, extendedMatrixRowSize, pivotCol, extendedMatrix);
+                    var maxRow = ArgMax(pivotRow, rowSize, pivotCol, extendedMatrix);
 
-                    if (extendedMatrix[iMax, pivotCol] == 0.0)
+                    if (extendedMatrix[maxRow, pivotCol] == 0.0)
                     {
                         pivotCol++;
                     }
                     else
                     {
-                        SwapRows(pivotRow, iMax, extendedMatrix);
+                        SwapRows(pivotRow, maxRow, extendedMatrix);
 
-                        for (var i = pivotRow + 1; i < extendedMatrixRowSize; i++)
+                        for (var row = pivotRow + 1; row < rowSize; row++)
                         {
-                            var f = extendedMatrix[i, pivotCol] / extendedMatrix[pivotRow, pivotCol];
-                            extendedMatrix[i, pivotCol] = 0.0;
+                            var f = extendedMatrix[row, pivotCol] / extendedMatrix[pivotRow, pivotCol];
+                            extendedMatrix[row, pivotCol] = 0.0;
 
-                            for (var j = pivotCol + 1; j < extendedMatrixColSize; j++)
+                            for (var col = pivotCol + 1; col < colSize; col++)
                             {
-                                extendedMatrix[i, j] -= extendedMatrix[pivotRow, j] * f;
+                                extendedMatrix[row, col] -= extendedMatrix[pivotRow, col] * f;
                             }
                         }
 
