@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -27,13 +28,13 @@ namespace chm_1
             return new Matrix(size, di, ia, au, al);
         }
 
-        private static double[] ReadDoubles(StreamReader file)
+        private static float[] ReadDoubles(StreamReader file)
         {
             return file
                 .ReadLine()!
                 .Trim()
                 .Split(' ')
-                .Select(double.Parse)
+                .Select(float.Parse)
                 .ToArray();
         }
 
@@ -47,9 +48,9 @@ namespace chm_1
                 .ToArray();
         }
 
-        public static double[] VectorFromFile(StreamReader file) => ReadDoubles(file);
+        public static float[] VectorFromFile(StreamReader file) => ReadDoubles(file);
 
-        public static void ExportToFile(StreamWriter outputFile, double[] vectorX, double[] absVector)
+        public static void ExportToFile(StreamWriter outputFile, float[] vectorX, float[] absVector)
         {
             var sb = new StringBuilder();
 
@@ -88,7 +89,7 @@ namespace chm_1
                 {
                     for (var j = 0; j < matrixA.Size; j++)
                     {
-                        Console.Write($"{matrixA[i, j]:G15} ");
+                        Console.Write($"{matrixA[i, j]:G7} ");
                     }
 
                     Console.WriteLine();
@@ -126,13 +127,13 @@ namespace chm_1
             Console.ResetColor();
         }
 
-        public static void Pprint(double[] vectorX)
+        public static void Pprint(IEnumerable<float> vectorX)
         {
             Console.WriteLine("\nVector PPRINT:");
 
             foreach (var item in vectorX)
             {
-                Console.Write("{0:G15} ", item);
+                Console.WriteLine("{0:G7} ", item);
             }
 
             Console.WriteLine();

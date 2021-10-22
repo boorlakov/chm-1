@@ -18,7 +18,7 @@ namespace chm_1
 
             var matrixA = Utils.MatrixFromFile(inputFile);
 
-            var matrixA1 = new double[matrixA.Size, matrixA.Size];
+            var matrixA1 = new float[matrixA.Size, matrixA.Size];
 
             for (var i = 0; i < matrixA.Size; i++)
             {
@@ -30,7 +30,7 @@ namespace chm_1
 
             var vectorB = Utils.VectorFromFile(inputFile);
 
-            var vectorB1 = new double[vectorB.Length];
+            var vectorB1 = new float[vectorB.Length];
             vectorB.AsSpan().CopyTo(vectorB1);
 
             var exactVectorX = Utils.VectorFromFile(inputAnswerFile);
@@ -48,7 +48,6 @@ namespace chm_1
             var vectorX = LinAlg.Solve(matrixA, vectorB);
             var vectorX1 = LinAlg.Gauss.Solve(matrixA1, vectorB1);
 
-            Console.ForegroundColor = ConsoleColor.Black;
             Console.Write("\nResult:");
             Utils.Pprint(vectorX);
 

@@ -13,15 +13,15 @@ namespace chm_1
         ///     al is for elements of lower triangular part of matrix
         /// </summary>
         /// <returns></returns>
-        public readonly double[] Al;
+        public readonly float[] Al;
 
         /// <summary>
         ///     au is for elements of upper triangular part of matrix
         /// </summary>
-        public readonly double[] Au;
+        public readonly float[] Au;
 
         /// di is for diagonal elements
-        public readonly double[] Di;
+        public readonly float[] Di;
 
         /// <summary>
         ///     ia is for profile matrix. i.e. by manipulating ia elements we can use our matrix
@@ -31,14 +31,14 @@ namespace chm_1
 
         public Matrix()
         {
-            Di = Array.Empty<double>();
-            Au = Array.Empty<double>();
-            Al = Array.Empty<double>();
+            Di = Array.Empty<float>();
+            Au = Array.Empty<float>();
+            Al = Array.Empty<float>();
             Ia = Array.Empty<int>();
             Decomposed = false;
         }
 
-        public Matrix(int size, double[] di, int[] ia, double[] au, double[] al)
+        public Matrix(int size, float[] di, int[] ia, float[] au, float[] al)
         {
             Size = size;
             Di = di ?? throw new ArgumentNullException(nameof(di));
@@ -55,7 +55,7 @@ namespace chm_1
         /// </summary>
         /// <param name="i"> row </param>
         /// <param name="j"> column </param>
-        public double this[int i, int j]
+        public float this[int i, int j]
         {
             get => GetElement(i, j);
             set => SetElement(i, j, value);
@@ -72,7 +72,7 @@ namespace chm_1
         {
             for (var i = 1; i < Size; i++)
             {
-                var sumDi = 0.0;
+                float sumDi = 0;
                 var j0 = i - (Ia[i + 1] - Ia[i]);
 
                 for (var ii = Ia[i] - 1; ii < Ia[i + 1] - 1; ii++)
@@ -86,7 +86,7 @@ namespace chm_1
                         var j0J = j - (jEnd - jBeg);
                         var jjBeg = Max(j0, j0J);
                         var jjEnd = Min(j, i - 1);
-                        var cL = 0.0;
+                        float cL = 0;
 
                         for (var k = 0; k <= jjEnd - jjBeg - 1; k++)
                         {
@@ -97,7 +97,7 @@ namespace chm_1
                         }
 
                         Al[ii] -= cL;
-                        var cU = 0.0;
+                        float cU = 0;
 
                         for (var k = 0; k <= jjEnd - jjBeg - 1; k++)
                         {
@@ -161,7 +161,7 @@ namespace chm_1
         /// <param name="j"> columns</param>
         /// <exception cref="FieldAccessException"> If matrix is not decomposed </exception>
         /// <returns></returns>
-        public double U(int i, int j)
+        public float U(int i, int j)
         {
             if (!Decomposed)
             {
@@ -170,10 +170,10 @@ namespace chm_1
 
             if (i == j)
             {
-                return 1.0;
+                return 1;
             }
 
-            return i < j ? this[i, j] : 0.0;
+            return i < j ? this[i, j] : 0;
         }
 
         /// <summary>
@@ -183,14 +183,14 @@ namespace chm_1
         /// <param name="j"> columns</param>
         /// <exception cref="FieldAccessException"> If matrix is not decomposed </exception>
         /// <returns></returns>
-        public double L(int i, int j)
+        public float L(int i, int j)
         {
             if (!Decomposed)
             {
                 throw new FieldAccessException("Matrix must be decomposed.");
             }
 
-            return i >= j ? this[i, j] : 0.0;
+            return i >= j ? this[i, j] : 0;
         }
 
         /// <summary>
@@ -201,7 +201,7 @@ namespace chm_1
         /// <param name="i"> rows </param>
         /// <param name="j"> columns </param>
         /// <returns></returns>
-        private double GetElement(int i, int j)
+        private float GetElement(int i, int j)
         {
             if (i == j)
             {
@@ -210,13 +210,13 @@ namespace chm_1
 
             if (i > j)
             {
-                return j + 1 <= i - (Ia[i + 1] - Ia[i]) ? 0.0 : Al[Ia[i + 1] + j - 1 - i];
+                return j + 1 <= i - (Ia[i + 1] - Ia[i]) ? 0 : Al[Ia[i + 1] + j - 1 - i];
             }
 
-            return i + 1 <= j - (Ia[j + 1] - Ia[j]) ? 0.0 : Au[Ia[j + 1] + i - j - 1];
+            return i + 1 <= j - (Ia[j + 1] - Ia[j]) ? 0 : Au[Ia[j + 1] + i - j - 1];
         }
 
-        void SetElement(int i, int j, double value)
+        void SetElement(int i, int j, float value)
         {
             if (i == j)
             {
