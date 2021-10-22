@@ -90,7 +90,7 @@ namespace chm_1
 
                     for (var col = row + 1; col < rowSize; col++)
                     {
-                        vectorX[row] -= extendedMatrix[row, col] * extendedMatrix[col, colSize - 1];
+                        vectorX[row] -= extendedMatrix[row, col] * vectorX[col];
                     }
 
                     vectorX[row] /= extendedMatrix[row, row];
